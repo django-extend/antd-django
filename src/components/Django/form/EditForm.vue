@@ -5,7 +5,7 @@
     @close="handleClose"
   >
     <span slot="title">
-      {{ sourceKey === "" ? "新建": "编辑" }}
+      {{ sourceKey === "" ? $t('create'): $t('edit') }}
     </span>
     <a-form-model
       ref="ruleForm"
@@ -34,9 +34,9 @@
       </div>
     </a-form-model>
     <div class="submit-tail">
-      <a-button :style="{ marginRight: '8px' }" @click="handleClose">取消</a-button>
+      <a-button :style="{ marginRight: '8px' }" @click="handleClose">{{ $t('cancel') }}</a-button>
       <a-button type="primary" @click="handleSubmit" :loading="submitting">
-        {{ sourceKey ? '更新' : '新增' }}
+        {{ $t('submit') }}
       </a-button>
     </div>
     <change-password-form

@@ -29,11 +29,11 @@
                 <a-select-option key="">--------</a-select-option>
                 <a-select-option v-for="item in actions.items" :key="item.action">{{ item.name }}</a-select-option>
               </a-select>
-              <a-button style="margin-left:10px" type="primary" @click="handleBulkAction">执行</a-button>
+              <a-button style="margin-left:10px" type="primary" @click="handleBulkAction">{{ $t('execute') }}</a-button>
             </a-row>
           </a-col>
           <a-col flex="0px">
-            <a-button type="primary" icon="plus" @click="handleAdd" v-if="auth('add')">新建</a-button>
+            <a-button type="primary" icon="plus" @click="handleAdd" v-if="auth('add')">{{ $t('create') }}</a-button>
           </a-col>
         </a-row>
       </div>
@@ -47,15 +47,15 @@
         rowKey="pk">
         <span slot="operate" slot-scope="_, record">
           <template v-if="auth('change')">
-            <a @click="handleEdit(record)">编辑</a>
+            <a @click="handleEdit(record)">{{ $t('edit') }}</a>
             <a-divider type="vertical" />
           </template>
           <template v-else-if="auth('view')">
-            <a @click="handleView(record)">查看</a>
+            <a @click="handleView(record)">{{ $t('view') }}</a>
             <a-divider type="vertical" />
           </template>
-          <a-popconfirm v-if="auth('delete')" title="确定删除？" @confirm="handleDelete(record)">
-            <a>删除</a>
+          <a-popconfirm v-if="auth('delete')" :title="$t('confirm.delete')" @confirm="handleDelete(record)">
+            <a>{{ $t('delete') }}</a>
           </a-popconfirm>
         </span>
         <template
