@@ -2,7 +2,7 @@
 import * as loginService from '@/api/login'
 // eslint-disable-next-line
 import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
-// import { asyncRouterMap } from '@/config/router.config'
+import { asyncRouterMap } from '@/config/router.config'
 // 前端路由表
 const constantRouterComponents = {
   // 基础页面 layout 必须引入
@@ -50,7 +50,7 @@ const getComponent = (item) => {
 export const generatorDynamicRouter = (menus) => {
   return new Promise((resolve, reject) => {
       const menuNav = []
-      rootRouter.children = menus
+      rootRouter.children = menus.concat(asyncRouterMap)
       menuNav.push(rootRouter)
       const routers = generator(menuNav)
       routers.push(notFoundRouter)
