@@ -27,7 +27,7 @@
           <span slot="label">
             {{ source.maps[key].meta.label }}
           </span>
-          <a-button v-if="editMode && source.maps[key].meta.type==='password'" @click="handleChangePassword(source.maps[key])">修改</a-button>
+          <a-button v-if="editMode && source.maps[key].meta.input_type==='password'" @click="handleChangePassword(source.maps[key])">修改</a-button>
           <django-field v-else :meta="source.maps[key].meta" v-model="source.items[source.maps[key].index].value"/>
         </a-form-model-item>
       </div>
@@ -136,7 +136,7 @@ export default {
       return false
     },
     makeRules (meta) {
-      if (this.editMode && meta.type === 'password') {
+      if (this.editMode && meta.input_type === 'password') {
         return []
       }
       if (!meta.required) {
@@ -182,7 +182,7 @@ export default {
           item[1].fields.forEach(name => {
             fields.push(name)
             const fieldItem = this.source.maps[name]
-            if (fieldItem.meta.type === 'password') {
+            if (fieldItem.meta.input_type === 'password') {
               const key = `_check_${fieldItem.key}`
               const meta = Object.assign({}, fieldItem.meta)
               meta.label = `${meta.label}(重复)`

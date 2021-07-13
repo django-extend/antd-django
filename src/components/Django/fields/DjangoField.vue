@@ -30,14 +30,15 @@
   />
   <django-file-field :value="modelValue" v-else-if="meta.type=='file upload'" :canDelete="!meta.required" @change="handleChange"/>
   <django-image-field :value="modelValue" v-else-if="meta.type=='image upload'" :canDelete="!meta.required" @change="handleChange"/>
-  <foreign-select :value="modelValue" v-else-if="meta.type==='field' && meta.fieldType==='ManyToOne'" :relation="meta.relation" @change="handleChange"/>
+  <foreign-select :value="modelValue" v-else-if="meta.type==='field' && meta.field_type==='ManyToOne'" :relation="meta.relation" @change="handleChange"/>
   <django-many-to-many-field
     :value="modelValue"
-    v-else-if="meta.type==='field' && meta.fieldType==='ManyToMany'"
+    v-else-if="meta.type==='field' && meta.field_type==='ManyToMany'"
     :choices="meta.choices"
     @change="handleChange"
   />
-  <a-input-password v-else-if="meta.type==='password'" :value="modelValue" :maxLength="meta.max_length" @change="handleChangeInput"/>
+  <a-input-password v-else-if="meta.input_type==='password'" :value="modelValue" :maxLength="meta.max_length" @change="handleChangeInput"/>
+  <a-textarea v-else-if="meta.input_type==='textarea'" :value="modelValue" @change="handleChangeInput"/>
   <a-input v-else :value="modelValue" :maxLength="meta.max_length" @change="handleChangeInput"/>
 </template>
 <script>
