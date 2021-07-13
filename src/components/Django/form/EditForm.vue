@@ -16,21 +16,20 @@
     >
       <div v-for="fieldset in fieldsets" :key="fieldset[0]">
         <a-divider v-if="fieldset[0]" orientation="left" :key="fieldset[0]">{{ fieldset[0] }}</a-divider>
-        <a-form-model-item v-for="key in fieldset[1].fields" :key="key" :prop="'items.' + source.maps[key].index + '.value'" :rules="source.maps[key].rules">
+        <a-form-model-item
+          v-for="key in fieldset[1].fields"
+          :key="key"
+          :prop="'items.' + source.maps[key].index + '.value'"
+          :rules="source.maps[key].rules"
+          :validate-status="source.maps[key].validateStatus"
+          :help="source.maps[key].help"
+        >
           <span slot="label">
             {{ source.maps[key].meta.label }}
           </span>
           <a-button v-if="editMode && source.maps[key].meta.type==='password'" @click="handleChangePassword(source.maps[key])">修改</a-button>
           <django-field v-else :meta="source.maps[key].meta" v-model="source.items[source.maps[key].index].value"/>
         </a-form-model-item>
-        <!-- <div v-for="key in fieldset[1].fields" :key="key">
-          <a-form-model-item :prop="'items.' + source.maps[key].index + '.value'" :rules="source.maps[key].rules">
-            <span slot="label">
-              {{ source.maps[key].meta.label }}
-            </span>
-            <django-field :meta="source.maps[key].meta" v-model="source.maps[key].value"/>
-          </a-form-model-item>
-        </div> -->
       </div>
     </a-form-model>
     <div class="submit-tail">
@@ -149,6 +148,8 @@ export default {
       const item = {
         key: key,
         meta: meta,
+        validateStatus: '',
+        help: '',
         index: this.source.items.length,
         rules: this.makeRules(meta)
       }
@@ -218,8 +219,9 @@ export default {
           return
         }
         for (const key in data) {
-          const value = err.response.data[key][0]
-          this.$message.error(`${key} ${value}`)
+          const item = this.source.maps[key]
+          item.validateStatus = 'error'
+          item.help = err.response.data[key][0]
         }
       }
     },
@@ -239,6 +241,8 @@ export default {
           this.submitting = true
           const params = this.buildParams()
           this.source.items.forEach(item => {
+            item.validateStatus = ''
+            item.help = ''
             if (!this.isFileTypeField(item)) {
               // 普通字段处理简单
               this.appendParam(params, item.key, item.value)
