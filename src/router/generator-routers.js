@@ -1,6 +1,4 @@
 // eslint-disable-next-line
-import * as loginService from '@/api/login'
-// eslint-disable-next-line
 import { BasicLayout } from '@/layouts'
 import { asyncRouterMap } from '@/config/router.config'
 import components from '@/utils/components'
@@ -36,7 +34,6 @@ const getComponent = (item) => {
  * @returns {Promise<Router>}
  */
 export const generatorDynamicRouter = (menus) => {
-  console.log(components.get('menu'))
   return new Promise((resolve, reject) => {
       const menuNav = []
       rootRouter.children = menus.concat(asyncRouterMap)
