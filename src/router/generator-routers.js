@@ -1,16 +1,9 @@
 // eslint-disable-next-line
 import * as loginService from '@/api/login'
 // eslint-disable-next-line
-import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
+import { BasicLayout } from '@/layouts'
 import { asyncRouterMap } from '@/config/router.config'
-// 前端路由表
-const constantRouterComponents = {
-  // 基础页面 layout 必须引入
-  BasicLayout: BasicLayout,
-  BlankLayout: BlankLayout,
-  RouteView: RouteView,
-  PageView: PageView
-}
+import components from '@/utils/components'
 
 // 前端未找到页面路由（固定不用改）
 const notFoundRouter = {
@@ -32,12 +25,7 @@ const rootRouter = {
 
 const getComponent = (item) => {
   if (typeof item.component === 'string') {
-    let component = constantRouterComponents[item.component]
-    if (!component) {
-      const componentPath = item.component.replace(new RegExp('^\\/+', 'g'), '')
-      component = () => import(`@/${componentPath}`)
-    }
-    return component
+    return components.get(item.component)
   }
   return item.component
 }
@@ -48,6 +36,7 @@ const getComponent = (item) => {
  * @returns {Promise<Router>}
  */
 export const generatorDynamicRouter = (menus) => {
+  console.log(components.get('menu'))
   return new Promise((resolve, reject) => {
       const menuNav = []
       rootRouter.children = menus.concat(asyncRouterMap)

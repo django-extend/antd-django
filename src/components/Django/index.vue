@@ -94,6 +94,7 @@ import { STable } from '@/components'
 import * as resource from '@/components/Django/api/resource'
 import EditForm from './form/EditForm'
 import ViewForm from './form/ViewForm'
+import components from '@/utils/components'
 
 export default ({
     components: { STable, EditForm, ViewForm },
@@ -125,11 +126,10 @@ export default ({
                   this.actions = res.actions
                   // django默认第一列点击为编辑
                   Object.keys(res.slots).forEach(key => {
-                    const [path, params] = res.slots[key]
-                    const componentPath = path.replace(new RegExp('^\\/+', 'g'), '')
+                    const [component, params] = res.slots[key]
                     const item = {
                       key: key,
-                      component: () => import(`@/${componentPath}`),
+                      component: () => components.get(component),
                       params: params
                     }
                     this.slots.push(item)
