@@ -3,8 +3,8 @@
     <a-card>
       <div class="table-page-search-wrapper">
         <a-form layout="inline" v-if="auth('view')">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24" v-for="filter in filters" :key="filter.key">
+          <a-row :gutter="48" v-if="metaInfo.filters">
+            <a-col :md="8" :sm="24" v-for="filter in metaInfo.filters.listFilter" :key="filter.key">
               <a-form-item :label="filter.label">
                 <a-select v-model="queryParam[filter.key]" @change="refreshData()">
                   <a-select-option key="">全部</a-select-option>
@@ -12,10 +12,10 @@
                 </a-select>
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="24" v-if="searchFields.length > 0">
+            <a-col :md="8" :sm="24" v-if="metaInfo.filters.searchFields.length > 0">
               <a-input-search
                 v-model="queryParam.search"
-                :placeholder="formatPlaceholder(searchFields)"
+                :placeholder="formatPlaceholder(metaInfo.filters.searchFields)"
                 @search="refreshData()"/>
             </a-col>
           </a-row>
@@ -42,6 +42,8 @@
         ref="table"
         size="default"
         :columns="columns"
+        :pageSize="metaInfo.pageSize"
+        :pagination="{showTotal:showTotal}"
         :data="loadData"
         :row-selection="actions.items && actions.items.length >0 ? { selectedRowKeys: selectedRowKeys, onChange: handleSelectChange } : null"
         rowKey="pk">
@@ -97,10 +99,6 @@ export default ({
     components: { STable, EditForm, ViewForm },
     data () {
         return {
-            filters: [
-            ],
-            searchFields: [
-            ],
             columns: [
             ],
             slots: [],
@@ -115,7 +113,8 @@ export default ({
             metaInfo: {},
             loadData: parameter => {
                 const { app, model } = this.getModelInfo()
-                const requestParameters = Object.fromEntries(Object.entries(this.queryParam).filter(([key, value]) => value !== ''))
+                const noEmptyParams = Object.fromEntries(Object.entries(this.queryParam).filter(([key, value]) => value !== ''))
+                const requestParameters = Object.assign({}, parameter, noEmptyParams)
                 return resource.list(app, model, requestParameters).then(res => {
                   this.columns = res.columns
                   this.columns.push({
@@ -145,18 +144,19 @@ export default ({
       '$route': function () {
         this.resetData()
         this.readMetaInfo()
-        this.readFilters()
         this.refreshData()
       }
     },
     created () {
       // 在列表页把模型的meta预加载一下，这样编辑页面不需要频繁请求options了
       this.readMetaInfo()
-      this.readFilters()
     },
     methods: {
       auth (action) {
         return this.$auth(`${this.$route.meta.permission}.${action}`)
+      },
+      showTotal (total) {
+        return `${total}条记录`
       },
       formatPlaceholder (source) {
         return source.map(item => {
@@ -170,8 +170,6 @@ export default ({
         this.$refs.table && this.$refs.table.refresh(true)
       },
       resetData () {
-        this.filters = []
-        this.searchFields = []
         this.selectedRowKeys = []
         this.actions = {}
         this.currentAction = ''
@@ -192,20 +190,9 @@ export default ({
         const { app, model } = this.getModelInfo()
         resource.options(app, model).then(res => {
           vm.metaInfo = res
-        })
-      },
-      readFilters () {
-        if (!this.auth('view')) {
-          return
-        }
-        const vm = this
-        const { app, model } = this.getModelInfo()
-        resource.getFilters(app, model).then(res => {
-          vm.filters = res.list_filter
-          vm.filters.forEach(filter => {
+          res.filters.listFilter.forEach(filter => {
             vm.queryParam[filter.key] = ''
           })
-          vm.searchFields = res.search_fields
         })
       },
       handleEdit (record) {
@@ -238,7 +225,6 @@ export default ({
         }
       },
       handleSelectChange (keys) {
-        console.log('selectedRowKeys changed: ', keys)
         this.selectedRowKeys = keys
       },
       handleBulkAction () {

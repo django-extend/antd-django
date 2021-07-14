@@ -97,7 +97,8 @@ export default {
     },
     pageSize (val) {
       Object.assign(this.localPagination, {
-        pageSize: val
+        pageSize: val,
+        pageSizeOptions: this.buildPageSizeOptions(val)
       })
     },
     showSizeChanger (val) {
@@ -112,6 +113,7 @@ export default {
     this.localPagination = ['auto', true].includes(this.showPagination) && Object.assign({}, this.localPagination, {
       current: localPageNum,
       pageSize: this.pageSize,
+      pageSizeOptions: this.buildPageSizeOptions(this.pageSize),
       showSizeChanger: this.showSizeChanger
     }) || false
     this.needTotalList = this.initTotalList(this.columns)
@@ -128,6 +130,13 @@ export default {
         current: 1, pageSize: this.pageSize
       }))
       this.loadData()
+    },
+    // 服务端可以定义不同的pageSize
+    buildPageSizeOptions (pageSize) {
+      let pages = [10, 20, 50, 100]
+      pages.push(pageSize)
+      pages = Array.from(new Set(pages)).sort((a, b) => { return a - b }).map(i => String(i))
+      return pages
     },
     /**
      * 加载数据方法
