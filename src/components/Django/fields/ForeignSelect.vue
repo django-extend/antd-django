@@ -2,15 +2,16 @@
   <a-select
     :show-search="relation.lazy"
     label-in-value
-    :value="value"
+    :value="valueObject"
     style="min-width: 200px"
+    :filter-option="false"
     @change="handleChange"
     @search="handleSearch"
     @popupScroll="handleScroll"
   >
     <div slot="dropdownRender" slot-scope="menu">
       <v-nodes :vnodes="menu" />
-      <div>
+      <div style="text-align:center;">
         <a-spin v-if="autocompleteLoading"/>
       </div>
     </div>
@@ -28,14 +29,14 @@ export default {
     }
   },
   model: {
-    prop: 'modelKey',
+    prop: 'value',
     event: 'change'
   },
   data () {
     return {
       choices: [
       ],
-      value: {
+      valueObject: {
       },
       autocompleteLoading: false,
       pageInfo: {
@@ -45,7 +46,7 @@ export default {
     }
   },
   props: {
-    modelKey: {
+    value: {
       type: [String, Number],
       default: undefined
     },
@@ -54,15 +55,11 @@ export default {
       required: true
     }
   },
-  watch: {
-    relation (val) {
-    }
-  },
   mounted () {
-    if (this.modelKey) {
-      resource.getStr(this.relation.app, this.relation.model, this.modelKey).then(res => {
-        this.value = {
-          key: this.modelKey,
+    if (this.value) {
+      resource.getStr(this.relation.app, this.relation.model, this.value).then(res => {
+        this.valueObject = {
+          key: this.value,
           label: res.str
         }
       })
@@ -93,14 +90,15 @@ export default {
       resource.listAutoComplete(this.relation.app, this.relation.model, params).then(res => {
         vm.autocompleteLoading = false
         vm.pageInfo = res.result
-        this.choices.push(...res.result.data)
+        vm.choices.push(...res.result.data)
       })
     },
     handleChange (val) {
-      this.value = val
+      this.valueObject = val
       this.$emit('change', val.key)
     },
     handleSearch (val) {
+      this.searchKeyword = val
       this.pageInfo = {}
       this.choices = []
       this.doAutoCompleteLoad()
