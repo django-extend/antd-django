@@ -124,7 +124,6 @@ export default ({
                     scopedSlots: { customRender: 'operate' }
                   })
                   this.actions = res.actions
-                  // django默认第一列点击为编辑
                   Object.keys(res.slots).forEach(key => {
                     const [component, params] = res.slots[key]
                     const item = {
