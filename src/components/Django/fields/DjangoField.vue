@@ -63,7 +63,7 @@ export default {
       }
       return rs
     },
-    formatDatetime (value, pattern = 'YYYYY-MM-DD HH:mm:ss') {
+    formatDatetime (value, pattern = 'YYYY-MM-DD HH:mm:ss') {
       return value ? moment(value, pattern) : null
     },
     handleChange (value) {
