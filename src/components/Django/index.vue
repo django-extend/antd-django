@@ -38,7 +38,7 @@
         </a-row>
       </div>
       <s-table
-        v-if="auth('view')"
+        v-if="auth('view') && !loading"
         ref="table"
         size="default"
         :columns="columns"
@@ -61,17 +61,15 @@
           </a-popconfirm>
         </span>
         <template
-          v-for="item in slots"
-          :slot="item.key"
-          slot-scope="text, record, index"
+          v-for="key in Object.keys(slots)"
+          :slot="key"
+          slot-scope="text"
         >
-          <component
-            :key="item.key"
-            :text="text"
-            :record="record"
-            :index="index"
-            :params="item.params"
-            :is="item.component"/>
+          <django-value
+            :key="key"
+            :value="text"
+            :meta="getMeta(key)"
+          />
         </template>
       </s-table>
       <edit-form
@@ -92,20 +90,22 @@
 <script>
 import { STable } from '@/components'
 import * as resource from '@/components/Django/api/resource'
+import DjangoValue from './slots/DjangoValue'
 import EditForm from './form/EditForm'
 import ViewForm from './form/ViewForm'
 import components from '@/utils/components'
 
 export default ({
-    components: { STable, EditForm, ViewForm },
+    components: { STable, EditForm, ViewForm, DjangoValue },
     data () {
         return {
             columns: [
             ],
-            slots: [],
+            slots: {},
             queryParam: {
             },
             actions: {},
+            loading: false,
             currentAction: '',
             selectedRowKeys: [],
             visiblePopup: false,
@@ -117,6 +117,14 @@ export default ({
                 const noEmptyParams = Object.fromEntries(Object.entries(this.queryParam).filter(([key, value]) => value !== ''))
                 const requestParameters = Object.assign({}, parameter, noEmptyParams)
                 return resource.list(app, model, requestParameters).then(res => {
+                  res.columns.forEach(column => {
+                    const slotKey = column.dataIndex
+                    this.slots[slotKey] = {
+                      component: DjangoValue,
+                      params: {}
+                    }
+                    column.scopedSlots = { customRender: slotKey }
+                  })
                   this.columns = res.columns
                   this.columns.push({
                     title: '操作',
@@ -131,7 +139,7 @@ export default ({
                       component: () => components.get(component),
                       params: params
                     }
-                    this.slots.push(item)
+                    this.slots[key] = item
                   })
                   return res.result
                 })
@@ -143,7 +151,6 @@ export default ({
       '$route': function () {
         this.resetData()
         this.readMetaInfo()
-        this.refreshData()
       }
     },
     created () {
@@ -153,6 +160,9 @@ export default ({
     methods: {
       auth (action) {
         return this.$auth(`${this.$route.meta.permission}.${action}`)
+      },
+      getMeta (key) {
+        return this.metaInfo ? this.metaInfo.actions.POST[key] : null
       },
       showTotal (total) {
         return `${total}条记录`
@@ -173,7 +183,7 @@ export default ({
         this.actions = {}
         this.currentAction = ''
         this.columns = []
-        this.slots = []
+        this.slots = {}
         this.queryParam = {}
       },
       getModelInfo () {
@@ -183,16 +193,13 @@ export default ({
           model: model
         }
       },
-      readMetaInfo () {
-        // todo 缓存
-        const vm = this
-        const { app, model } = this.getModelInfo()
-        resource.options(app, model).then(res => {
-          vm.metaInfo = res
-          res.filters.listFilter.forEach(filter => {
-            vm.queryParam[filter.key] = ''
-          })
+      async readMetaInfo () {
+        this.loading = true
+        this.metaInfo = await this.$store.dispatch('meta/getInfo', this.$route.name)
+        this.metaInfo.filters.listFilter.forEach(filter => {
+          this.queryParam[filter.key] = ''
         })
+        this.loading = false
       },
       handleEdit (record) {
         this.editSourceKey = record.pk
