@@ -6,7 +6,7 @@
           <a-row :gutter="48" v-if="metaInfo.filters">
             <a-col :md="8" :sm="24" v-for="filter in metaInfo.filters.listFilter" :key="filter.key">
               <a-form-item :label="filter.label">
-                <a-select v-model="queryParam[filter.key]" @change="refreshData()">
+                <a-select v-model="queryParam[filter.key]" @change="refreshData(true)">
                   <a-select-option key="">全部</a-select-option>
                   <a-select-option v-for="choice in filter.choices" :key="choice[0]">{{ choice[1] }}</a-select-option>
                 </a-select>
@@ -16,7 +16,7 @@
               <a-input-search
                 v-model="queryParam.search"
                 :placeholder="formatPlaceholder(metaInfo.filters.searchFields)"
-                @search="refreshData()"/>
+                @search="refreshData(true)"/>
             </a-col>
           </a-row>
         </a-form>
@@ -172,11 +172,11 @@ export default ({
           return item.label
         }).join('/')
       },
-      refreshData () {
+      refreshData (bool = false) {
         if (!this.auth('view')) {
           return
         }
-        this.$refs.table && this.$refs.table.refresh(true)
+        this.$refs.table && this.$refs.table.refresh(bool)
       },
       resetData () {
         this.selectedRowKeys = []
