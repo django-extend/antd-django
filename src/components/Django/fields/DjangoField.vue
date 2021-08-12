@@ -49,11 +49,19 @@ import DjangoManyToManyField from './DjangoManyToManyField'
 import moment from 'moment'
 export default {
   components: { ForeignSelect, DjangoFileField, DjangoImageField, DjangoManyToManyField },
-  // eslint-disable-next-line vue/require-prop-types
-  props: ['modelValue', 'meta'],
   model: {
     prop: 'modelValue',
     event: 'change'
+  },
+  props: {
+    modelValue: {
+      type: [String, Number, Boolean, Array, File],
+      default: null
+    },
+    meta: {
+      type: Object,
+      required: true
+    }
   },
   methods: {
     getDecimalStep (precision) {
