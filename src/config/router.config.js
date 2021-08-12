@@ -27,7 +27,12 @@ export const constantRouterMap = [
       }
     ]
   },
-
+  {
+    path: '/refresh',
+    name: 'refresh',
+    component: () => import('@/views/Refresh'),
+    hidden: true
+  },
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/404')
