@@ -35,9 +35,12 @@ router.beforeEach((to, from, next) => {
             store.dispatch('GenerateRoutes', { menus }).then(() => {
               // 根据roles权限生成可访问的路由表
               // 动态添加可访问路由表
-              store.getters.addRouters.forEach(route => {
-                router.addRoute(route)
-              })
+              router.addRoutes(store.getters.addRouters)
+              // addRoute不一定有这个函数
+              // store.getters.addRouters.forEach(route => {
+              //   router.addRoute(route)
+              // })
+
               // 请求带有 redirect 重定向时，登录自动重定向到该地址
               const redirect = decodeURIComponent(from.query.redirect || to.path)
               if (to.path === redirect) {
