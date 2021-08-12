@@ -41,3 +41,29 @@ cnpm install webpack@4.1.0  # 降级webpack版本，否则项目会跑不出来�
 ```
 npm run serve -- --port 5000 # 后端占用8000端口，前端指定5000端口
 ```
+
+### 界面截图
+
+> 登录页面
+
+![image](https://gitee.com/django-extend/photowall/raw/master/antd/antd_login.png)
+
+> 首页
+
+![image](https://gitee.com/django-extend/photowall/raw/master/antd/antd_dashboard.png)
+
+> 列表页
+
+![image](https://gitee.com/django-extend/photowall/raw/master/antd/antd_list.png)
+
+> 新增页
+
+![image](https://gitee.com/django-extend/photowall/raw/master/antd/antd_create.png)
+
+> 编辑页
+
+![image](https://gitee.com/django-extend/photowall/raw/master/antd/antd_edit.png)
+
+> 修改密码页
+
+![image](https://gitee.com/django-extend/photowall/raw/master/antd/antd_edit_password.png)
