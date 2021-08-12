@@ -84,7 +84,7 @@ export default {
       menus: [],
       // 侧栏收起状态
       collapsed: false,
-      title: defaultSettings.title,
+      title: this.$store.getters.userInfo.sitename,
       settings: {
         // 布局类型
         layout: defaultSettings.layout, // 'sidemenu', 'topmenu'
@@ -115,6 +115,7 @@ export default {
     })
   },
   created () {
+    console.log(this.$store.getters.userInfo)
     const routes = this.mainMenu.find(item => item.path === '/')
     this.menus = (routes && routes.children) || []
     // 处理侧栏收起状态
