@@ -116,8 +116,16 @@ export default {
       return params
     },
     appendParam (params, key, value) {
+      if (value === undefined || value === null) {
+        // undefined是新增模式，null是编辑模式服务端返回
+        return
+      }
       if (params instanceof FormData) {
-        params.append(key, value)
+        if (Array.isArray(value)) {
+          params.append(`${key}[]`, value)
+        } else {
+          params.append(key, value)
+        }
       } else {
         params[key] = value
       }
