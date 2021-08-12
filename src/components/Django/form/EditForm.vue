@@ -151,7 +151,8 @@ export default {
         validateStatus: '',
         help: '',
         index: this.source.items.length,
-        rules: this.makeRules(meta)
+        rules: this.makeRules(meta),
+        value: null
       }
       this.source.items.push(item)
       this.source.maps[item.key] = item
