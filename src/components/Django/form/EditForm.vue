@@ -160,7 +160,7 @@ export default {
         help: '',
         index: this.source.items.length,
         rules: this.makeRules(meta),
-        value: null
+        value: meta.default
       }
       this.source.items.push(item)
       this.source.maps[item.key] = item
@@ -220,6 +220,11 @@ export default {
     },
     echoError (err) {
       if (err.response) {
+        const status = err.response.status
+        if (status === 500) {
+          this.$message.error('服务器内部错误')
+          return
+        }
         const data = err.response.data
         if (Array.isArray(data)) {
           data.forEach(item => {
