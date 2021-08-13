@@ -7,7 +7,10 @@
   >
     <a-descriptions v-for="fieldset in fieldsets" :key="fieldset[0]" :title="fieldset[0]" bordered :column="1">
       <a-descriptions-item v-for="field in fieldset[1].fields" :key="field.name" :label="field.label">
-        {{ field.value }}
+        <django-value
+          :value="field.value"
+          :meta="getMeta(field.name)"
+        />
       </a-descriptions-item>
     </a-descriptions>
     <div class="submit-tail">
@@ -17,7 +20,10 @@
 </template>
 <script>
 import * as resource from '@/components/Django/api/resource'
+import DjangoValue from '@/components/Django/slots/DjangoValue'
+
 export default {
+  components: { DjangoValue },
   props: {
     visible: {
       type: Boolean,
@@ -55,6 +61,9 @@ export default {
     }
   },
   methods: {
+    getMeta (key) {
+        return this.metaInfo ? this.metaInfo.actions.POST[key] : null
+    },
     bind (values) {
       this.resetData()
       const fieldInfos = this.metaInfo.actions.POST
