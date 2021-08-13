@@ -1,5 +1,5 @@
 <template>
-  <a-input-number v-if="meta.type==='integer'" :value="modelValue" @change="handleChange"/>
+  <a-input-number v-if="meta.type==='integer'" :precision="0" :value="modelValue" @change="handleChange"/>
   <a-select v-else-if="meta.type==='choice'" :value="modelValue" @change="handleChange">
     <a-select-option v-for="choice in meta.choices" :key="choice.value">{{ choice.display_name }}</a-select-option>
   </a-select>
