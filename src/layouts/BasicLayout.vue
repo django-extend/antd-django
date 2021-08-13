@@ -115,7 +115,6 @@ export default {
     })
   },
   created () {
-    console.log(this.$store.getters.userInfo)
     const routes = this.mainMenu.find(item => item.path === '/')
     this.menus = (routes && routes.children) || []
     // 处理侧栏收起状态
