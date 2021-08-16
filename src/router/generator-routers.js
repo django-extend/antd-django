@@ -29,7 +29,7 @@ const getComponent = (item) => {
 }
 
 /**
- * 动态生成菜单
+ * 动态菜单步骤4: 动态生成菜单
  * @param token
  * @returns {Promise<Router>}
  */

@@ -17,9 +17,11 @@ const permission = {
   },
   actions: {
     GenerateRoutes ({ commit }, data) {
+      // 动态菜单步骤3: 收到指令，调用步骤4函数生成路由
       return new Promise(resolve => {
         const { menus } = data
         generatorDynamicRouter(menus).then(routers => {
+          // 动态菜单步骤5: 将路由写入本地存储
           commit('SET_ROUTERS', routers)
           resolve()
         })

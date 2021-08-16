@@ -25,6 +25,7 @@ router.beforeEach((to, from, next) => {
     } else {
       // check login user.roles is null
       if (store.getters.roles.length === 0) {
+        // 动态菜单步骤1: 从后端读取菜单列表
         // request login userInfo
         store
           .dispatch('GetInfo')
@@ -32,9 +33,9 @@ router.beforeEach((to, from, next) => {
             // const roles = res.result && res.result.role
             // generate dynamic router
             const menus = res.result.menus
+            // 动态菜单步骤2: 向vuex发起指令，通知生成菜单
             store.dispatch('GenerateRoutes', { menus }).then(() => {
-              // 根据roles权限生成可访问的路由表
-              // 动态添加可访问路由表
+              // 动态菜单步骤6: 将动态路由写入vue-router
               router.addRoutes(store.getters.addRouters)
               // addRoute不一定有这个函数
               // store.getters.addRouters.forEach(route => {
